@@ -5,6 +5,7 @@
 to framebuffers and low level code such as bytes.
 '''
 
+from random import randint
 import struct
 
 
@@ -40,21 +41,36 @@ def color_select(r, g, b):
     except ValueError:
         print("Input value is incorrect! Try again using numbers this time...")
     else:
-        if r <= 0 and g <= 0 and b <= 0:
+        if r <= 255 and g <= 255 and b <= 255:
             return color
         else:
             print("Input value out of range...")
 
+# CONSTANTS AND VARIABLES
+
+BLACK = color_select(0, 0, 0)
+WHITE = color_select(255, 255, 255)
+random_color = color_select(randint(0, 255), randint(0, 255), randint(0, 255))
+
+
 # Class of type Render that will nest every function that will create a BMP file from scratch. 
 
 class Render(object):
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
+    def __init__(self):
+        self.width = 0
+        self.height = 0
+        self.FILE_SIZE = (14 + 40)
+        self.PIXEL_COUNT = 3
+        self.PLANE = 1
+        self.BITS_PER_PIXEL = 24
+        self.pixels = 0
+        
         
     
     def glCreateWindow(self, width, height):
-        return print("hello")
+        self.width = width
+        self.height = height
+        self.glClear()
     
     def glCreateWindow(self, width, height):
         return print("hello")

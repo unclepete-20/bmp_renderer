@@ -23,7 +23,7 @@ def word(w):
 
 def dword(dw):
     # 4 bytes character
-    dw = struct.pack('=1', dw)   
+    dw = struct.pack('=l', dw)   
     return dw  
 
 def color_select(r, g, b):
@@ -35,6 +35,7 @@ def color_select(r, g, b):
     r = abs(r)
     g = abs(g)
     b = abs(b)
+    
     
     try:
         color = bytes([int(b), int(g), int(r)])
@@ -63,29 +64,48 @@ class Render(object):
         self.PIXEL_COUNT = 3
         self.PLANE = 1
         self.BITS_PER_PIXEL = 24
+        self.DIB_HEADER = 40
         self.pixels = 0
+        self.clearColor = color_select(0, 0, 0)
+        self.currColor = color_select(1, 1, 1)
         
         
-    
     def glCreateWindow(self, width, height):
         self.width = width
         self.height = height
         self.glClear()
     
-    def glCreateWindow(self, width, height):
-        return print("hello")
+    def glClear(self):
+        self.framebuffer = [[self.clearColor for y in range(self.height)]
+                       for x in range(self.width)]
     
-    def glCreateWindow(self, width, height):
-        return print("hello")
     
-    def glCreateWindow(self, width, height):
-        return print("hello")
-    
-    def glCreateWindow(self, width, height):
-        return print("hello")
-    
-    def glCreateWindow(self, width, height):
-        return print("hello")
-    
-    def glCreateWindow(self, width, height):
-        return print("hello")
+    def glFinish(self, filename):
+        with open(filename, 'wb') as file:
+            # Header
+            file.write(bytes('B'.encode('ascii')))
+            file.write(bytes('M'.encode('ascii')))
+
+            # file size
+            file.write(dword(self.FILE_SIZE + self.height * self.width * self.PIXEL_COUNT))
+            file.write(dword(0))
+            file.write(dword(self.FILE_SIZE))
+
+            # Info Header
+            file.write(dword(self.DIB_HEADER))
+            file.write(dword(self.width))
+            file.write(dword(self.height))
+            file.write(word(self.PLANE))
+            file.write(word(self.BITS_PER_PIXEL))
+            file.write(dword(0))
+            file.write(dword(self.width * self.height * self.PIXEL_COUNT))
+            file.write(dword(0))
+            file.write(dword(0))
+            file.write(dword(0))
+            file.write(dword(0))
+
+            # Color table
+            for y in range(self.height):
+                for x in range(self.width):
+                    file.write(self.framebuffer[x][y])
+            file.close()

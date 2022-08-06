@@ -35,24 +35,17 @@ def color_select(r, g, b):
     r = abs(r)
     g = abs(g)
     b = abs(b)
-    
-    
+        
+        
     try:
-        color = bytes([int(b), int(g), int(r)])
+        color = bytes([int(b * 255), int(g * 255), int(r * 255)])
     except ValueError:
         print("Input value is incorrect! Try again using numbers this time...")
     else:
-        if r <= 255 and g <= 255 and b <= 255:
+        if r <= 1 and g <= 1 and b <= 1:
             return color
         else:
             print("Input value out of range...")
-
-# CONSTANTS AND VARIABLES
-
-BLACK = color_select(0, 0, 0)
-WHITE = color_select(255, 255, 255)
-random_color = color_select(randint(0, 255), randint(0, 255), randint(0, 255))
-
 
 # Class of type Render that will nest every function that will create a BMP file from scratch. 
 
@@ -60,25 +53,75 @@ class Render(object):
     def __init__(self):
         self.width = 0
         self.height = 0
-        self.FILE_SIZE = (14 + 40)
+        self.FILE_SIZE = (54)
         self.PIXEL_COUNT = 3
         self.PLANE = 1
         self.BITS_PER_PIXEL = 24
         self.DIB_HEADER = 40
         self.pixels = 0
-        self.clearColor = color_select(0, 0, 0)
-        self.currColor = color_select(1, 1, 1)
+        self.clearColor = color_select(1, 1, 1)
+        self.currentColor = color_select(0, 0, 0)
+        self.viewport_x = 0 
+        self.viewport_y = 0
+        self.viewport_height = 0
+        self.viewport_width = 0
         
-        
+    '''
+    --- SR1: POINTS
+  
+    '''      
     def glCreateWindow(self, width, height):
         self.width = width
         self.height = height
-        self.glClear()
-    
-    def glClear(self):
+        
         self.framebuffer = [[self.clearColor for y in range(self.height)]
                        for x in range(self.width)]
+        
+    def glViewPort(self, x, y, width, height):
+        self.viewport_x = x
+        self.viewport_y = y
+        self.viewport_width = width
+        self.viewport_height = height
     
+    def glColor(self, r, g, b):
+        self.currentColor = color_select(r, g, b)
+    
+    def glClearColor(self, r, g, b):
+        self.currentColor = color_select(r, g, b)
+        for x in range(self.viewport_x, self.viewport_x + self.viewport_width + 1):
+            for y in range(self.viewport_y, self.viewport_y + self.viewport_height + 1):
+                self.glPoint(y,x)
+        
+    def glVertex(self, x, y):
+        if -1 <= x <= 1:
+            if -1 <= y <= 1:
+                pass
+            else:
+                y = 0
+        else:
+            x = 0
+        self.pixel_X = int((x + 1) * self.viewport_width * 1/2 ) + self.viewport_x
+        self.pixel_Y = int((y + 1) * self.viewport_height * 1/2) + self.viewport_y
+        self.glPoint(self.pixel_Y,self.pixel_X)
+        
+    def glClear(self):
+        for x in range(self.viewport_x, self.viewport_x + self.viewport_width + 1):
+            for y in range(self.viewport_y, self.viewport_y + self.viewport_height + 1):
+                self.glPoint(y, x)
+        
+    def glPoint(self, x, y):
+        self.framebuffer[x][y] = self.currentColor
+    
+    def pointXY(self, x, y, r, g, b):
+        self.framebuffer[x][y] = color_select(r, g, b)
+    
+    
+        
+    '''
+    --- SR2: LINES
+    
+    '''
+        
     
     def glFinish(self, filename):
         with open(filename, 'wb') as file:

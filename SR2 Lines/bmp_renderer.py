@@ -90,7 +90,7 @@ class Render(object):
         self.currentColor = color_select(r, g, b)
         for x in range(self.viewport_x, self.viewport_x + self.viewport_width + 1):
             for y in range(self.viewport_y, self.viewport_y + self.viewport_height + 1):
-                self.glPoint(y,x)
+                self.glPoint(x, y)
         
     def glVertex(self, x, y):
         if -1 <= x <= 1:
@@ -102,18 +102,18 @@ class Render(object):
             x = 0
         self.pixel_X = int((x + 1) * self.viewport_width * 1/2 ) + self.viewport_x
         self.pixel_Y = int((y + 1) * self.viewport_height * 1/2) + self.viewport_y
-        self.glPoint(self.pixel_Y,self.pixel_X)
+        self.glPoint(self.pixel_X,self.pixel_Y)
         
     def glClear(self):
         for x in range(self.viewport_x, self.viewport_x + self.viewport_width + 1):
             for y in range(self.viewport_y, self.viewport_y + self.viewport_height + 1):
-                self.glPoint(y, x)
+                self.glPoint(x, y)
         
     def glPoint(self, x, y):
-        self.framebuffer[x][y] = self.currentColor
+        self.framebuffer[y][x] = self.currentColor
     
     def pointXY(self, x, y, r, g, b):
-        self.framebuffer[x][y] = color_select(r, g, b)
+        self.framebuffer[y][x] = color_select(r, g, b)
     
     
         
@@ -144,14 +144,14 @@ class Render(object):
 
         if steep:
             x0, y0 = y0, x0
-            x1, y1 = y1,x1
+            x1, y1 = y1, x1
 
         if  x0 > x1:
-            x0,x1 = x1,x0
-            y0,y1 = y1,y0
+            x0, x1 = x1, x0
+            y0, y1 = y1, y0
 
-        dy = abs(y1-y0)
-        dx = abs(x1-x0)
+        dy = abs(y1 - y0)
+        dx = abs(x1 - x0)
 
         offset = 0
         
@@ -159,11 +159,11 @@ class Render(object):
         
         y = y0
 
-        for x in range(x0,x1+1):
+        for x in range(x0, x1 + 1):
             if steep:
-                self.glPoint(x,y)
+                self.glPoint(x, y)
             else:
-                self.glPoint(y,x)
+                self.glPoint(y, x)
 
             offset += dy * 2
             if offset >= threshold:

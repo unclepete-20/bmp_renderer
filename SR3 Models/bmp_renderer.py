@@ -90,7 +90,7 @@ class Render(object):
         self.currentColor = color_select(r, g, b)
         for x in range(self.viewport_x, self.viewport_x + self.viewport_width + 1):
             for y in range(self.viewport_y, self.viewport_y + self.viewport_height + 1):
-                self.glPoint(y,x)
+                self.glPoint(x, y)
         
     def glVertex(self, x, y):
         if -1 <= x <= 1:
@@ -102,16 +102,16 @@ class Render(object):
             x = 0
         self.pixel_X = int((x + 1) * self.viewport_width * 1/2 ) + self.viewport_x
         self.pixel_Y = int((y + 1) * self.viewport_height * 1/2) + self.viewport_y
-        self.glPoint(self.pixel_Y,self.pixel_X)
+        self.glPoint(self.pixel_X,self.pixel_Y)
         
     def glClear(self):
         for x in range(self.viewport_x, self.viewport_x + self.viewport_width + 1):
             for y in range(self.viewport_y, self.viewport_y + self.viewport_height + 1):
-                self.glPoint(y, x)
+                self.glPoint(x, y)
         
     def glPoint(self, x, y):
         if(0 < x < self.width and 0 < y < self.height):
-            self.framebuffer[x][y] = self.currentColor
+            self.framebuffer[y][x] = self.currentColor
     
     
         

@@ -1,61 +1,23 @@
 from bmp_renderer import Render
-from Obj import Obj
+from Vector import V3
 
 frame = Render()
-model = Obj('girl.obj')
 
-scale_factor = (0.8, 0.8)
-translate_factor = (0.000000000008, 0.000000000008)
+scale_factor = (1, 1, 1)
+translate_factor = (0, -0.2, 0)
 
 frame.glCreateWindow(1024, 1024)
 
 frame.glViewPort(80, -200, 900, 900)
 
-frame.glClear()
+frame.glClearColor(1, 1, 1)
 
-frame.glColor(1, 1, 1)
+frame.glColor(0, 0, 0)
 
-for face in model.faces:
+
+frame.draw_triangles(V3(10, 70), V3(50, 160), V3(70, 80))
     
-    # Draws squares
-    if len(face) == 4:
-        f1 = face[0][0] - 1
-        f2 = face[1][0] - 1
-        f3 = face[2][0] - 1
-        f4 = face[3][0] - 1
-        
-        print('faces square', (f1, f2, f3, f4))
-        
-        v1 = frame.transform_vertex(model.vertex[f1], scale_factor, translate_factor)
-        v2 = frame.transform_vertex(model.vertex[f2], scale_factor, translate_factor)
-        v3 = frame.transform_vertex(model.vertex[f3], scale_factor, translate_factor)
-        v4 = frame.transform_vertex(model.vertex[f4], scale_factor, translate_factor)
-        
-        print('vertices square', (v1, v2, v3, v4))
-        
-        frame.glLine(v1[0], v1[1], v2[0], v2[1])
-        frame.glLine(v2[0], v2[1], v3[0], v3[1])
-        frame.glLine(v3[0], v3[1], v4[0], v4[1])
-        frame.glLine(v4[0], v4[1], v1[0], v1[1])
-     
-    # Draws triangles    
-    if len(face) == 3:
-        f1 = face[0][0] - 1
-        f2 = face[1][0] - 1
-        f3 = face[2][0] - 1
-        
-        print('faces triangle', (f1, f2, f3))
-        
-        v1 = frame.transform_vertex(model.vertex[f1], scale_factor, translate_factor)
-        v2 = frame.transform_vertex(model.vertex[f2], scale_factor, translate_factor)
-        v3 = frame.transform_vertex(model.vertex[f3], scale_factor, translate_factor)
-        
-        print('vertices triangle', (v1, v2, v3))
-        
-        frame.glLine(v1[0], v1[1], v2[0], v2[1])
-        frame.glLine(v2[0], v2[1], v3[0], v3[1])
-        frame.glLine(v3[0], v3[1], v1[0], v1[1])
-    
+#frame.load_model('girl.obj', scale_factor, translate_factor)
 
 frame.glFinish('prueba.bmp')
 
